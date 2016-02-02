@@ -1,12 +1,12 @@
 Rails.application.routes.draw do
 
   root 'static_pages#home'
+  # This is where the initial page lands
   get 'static_pages/home'
   get 'static_pages/help'
   get 'static_pages/about'
+#  These are the available pages
 
-  get 'static-pages-pages/home'
-  get 'static-pages/help'
 
   #  This handles all the rights.
 
