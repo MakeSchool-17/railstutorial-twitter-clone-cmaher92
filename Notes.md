@@ -422,3 +422,83 @@ vendor/assets: assets from third-party vendors
 
 ### Manifest Files
 Once assets in their logical locations, use *manifest files* to tell Rails (via the Sprockets gem) how to combine them to form single files.
+
+# Chapter 6
+#### Working through generating and understanding the creation of a User model
+*Notes*
+Model - is always singular
+Controllers - plural
+
+#### Generating User model
+`rails generate controller Users new` *plural*
+`rails generate model User name:string email:string` *singular*
+
+#### Migrations:
+  provide a way to alter the structure of the database incrementally, tracked by time of migration.
+
+  *This is what is happening behind the scenes*
+  `change` method determines changes to be made to a database
+    - `change` method uses the Rails method `create_table`
+    - `create_table` accepts a *block variable* in the book's example it was `|t|`
+    - `create_table` then uses the `t` within the block to create provided
+    - *Note: table is named `users` in the example because it is made up of multiple users unlike a model which is a single user*
+    - `t.timestamps null:false` creates two *columns* `created_at` and `updated_at`
+
+    If changes are made to the database the following command can be run, referred to as *migrating up*
+    `bundle exec rake db:migrate` (creates a file *db/development.sqlite3*)
+    `bundle exec rake db:rollback` will rollback the latest change by 1 step
+
+#### User Model:
+  After creating a model it's possible to manipulate the database without it saving the changes using the following command:
+  `rails console --sandbox` `quit` to exit the sandbox
+
+  - `User.new` -> creates a new `User` Object in memory
+  - `User.new(name: "Connor Maher", email: "connormmaher@gmail.com")` -> also creates a new object in memory
+  - `user.valid?` -> in this example `user` is an instantiated object, `valid?` returns bool based on validity
+  - `user.save` -> saves instantiated object to database returns bool based on success
+  - Also able to access any *attributes* using *dot-notation*
+  - `User.create` -> creates and saves a new user object returns object which can be optionally assigned to variable
+  - `User.destroy` -> returns destroyed object
+
+#### Talking to database with ActiveRecord:
+  - `User.find(1)` - returns User by ID, can also be used to confirm deletion of a User object from database will raise error            `ActiveRecords:UserNotFound`
+  - `User.find_by(email: "connormmaher@gmail.com")` - inefficient for large number of users, database indices more efficient
+  - `User.first` -> returns first user in a database
+  - `User.all` -> returns all the users in the database as an object of the class `ActiveRecord::Relationshonship` which is effectively an array
+
+Two ways to update objects.
+  - Assign attributes individually (each asset) *make sure to save to the database!*
+  - Use `update_attributes` method which accepts a *hash of attributes* on success preforms both update and save in one step  
+
+#### User validation
+  - Don't allow `name:` and `email:` to just be any string
+  - Don't allow blank entries
+
+Impose constraints using *validations*
+
+#### Testing validation
+  *test/models/user_test.rb*
+
+
+####Test process:
+    Method:
+      - start with a valid model object
+      - set one of its attributes we want to be invalid
+      - test to check validity
+
+    Safety Net:
+      `test/models/user_test.rb`
+      - write a test to make sure initial model object is valid
+
+    Check if it works
+    `>> user.errors.full_messages`
+    `=> ["Name can't be blank"]`
+
+    An attempt to save would also fail
+
+####Length validation:
+  Set length to 51 characters for both name &  251 for email, number is chosen at random.
+  Essentially the test tries to create a user that is longer then the allowed length
+
+####Format validation:
+  
