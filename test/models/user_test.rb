@@ -55,4 +55,8 @@ end
       assert @user.valid?, "#{valid_address.inspect} should be valid"
     end
   end
+
+  test "authenticated? should return flase for a user with nil digest" do
+    assert_not @user.authenticated('')
+  end
 end
