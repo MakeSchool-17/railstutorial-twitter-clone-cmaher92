@@ -25,9 +25,6 @@ class ActiveSupport::TestCase
     end
   end
 
-    session[:user_id] = user.id
-  end
-
   private
 
     # Returns true inside an integration test

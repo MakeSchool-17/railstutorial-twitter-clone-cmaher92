@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
                     format: { with: VALID_EMAIL_REGEX },
                     uniqueness: { case_sensitive: false }
 has_secure_password
-validates :password, presence: true, length: { minimum: 6 }
+validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
   # calls the validates method and checks if the presence is true
   # refer to test/models/user_test.rb
   def User.digest(string)
@@ -36,6 +36,6 @@ validates :password, presence: true, length: { minimum: 6 }
 
   def authenticated?(remember_token)
     return false if remember_digest.nil?
-    BCrypt::Password.new(remember_digest) == is_password?(remember_token)
+    BCrypt::Password.new(remember_digest).is_password?(remember_token)
   end
 end
